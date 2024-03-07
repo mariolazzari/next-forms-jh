@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+
 import { schema } from "@/app/registrationSchema";
 
 export async function POST(req: NextRequest) {
@@ -6,11 +7,14 @@ export async function POST(req: NextRequest) {
   const data = Object.fromEntries(formData);
 
   const parsed = schema.safeParse(data);
+
   if (parsed.success) {
-    return NextResponse.json({ message: "User registred", user: parsed.data });
+    // Add parsed.data to the database
+    return NextResponse.json({ message: "User registered", user: parsed.data });
+  } else {
+    return NextResponse.json(
+      { message: "Invalid data", error: parsed.error },
+      { status: 400 }
+    );
   }
-  return NextResponse.json(
-    { message: "Invalid data", error: parsed.error },
-    { status: 400 },
-  );
 }
