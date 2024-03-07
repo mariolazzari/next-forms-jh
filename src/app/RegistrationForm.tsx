@@ -1,22 +1,21 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Form } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { schema } from "./registrationSchema";
+import { schema, Schema } from "./registrationSchema";
+import FormInput from "./FormInput";
 
-export const RegistrationForm = () => {
-  const form = useForm<z.infer<typeof schema>>({
+type Props = {
+  onDataAction: (data: Schema) => Promise<{
+    message: string;
+    user?: Schema;
+    issues?: string[];
+  }>;
+};
+
+export const RegistrationForm = ({ onDataAction }: Props) => {
+  const form = useForm<Schema>({
     resolver: zodResolver(schema),
     defaultValues: {
       first: "",
@@ -25,66 +24,59 @@ export const RegistrationForm = () => {
     },
   });
 
-  const onSubmt = async (data: z.infer<typeof schema>) => {
-    const res = await fetch("/api/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-    const resData = await res.json();
+  const onSubmt = async (data: Schema) => {
+    // form data
+    // const formData = new FormData()
+    // formData.append("first", data.first)
 
-    console.log(resData);
+    // const res = await fetch("/api/registerForm", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: data),
+    // });
+
+    // const res = await fetch("/api/register", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify(data),
+    // });
+    // const resData = await res.json();
+
+    // console.log(resData);
+
+    // server action
+
+    console.log(await onDataAction(data));
   };
 
   return (
     <Form {...form}>
       <form className="space-y-8" onSubmit={form.handleSubmit(onSubmt)}>
         <div className="flex gap-2">
-          <FormField
+          <FormInput
             control={form.control}
             name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input placeholder="" {...field} />
-                </FormControl>
-                <FormDescription>Your email address</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
+            label="Email"
+            description="Your email address"
           />
-          <FormField
+
+          <FormInput
             control={form.control}
             name="first"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>First</FormLabel>
-                <FormControl>
-                  <Input placeholder="" {...field} />
-                </FormControl>
-                <FormDescription>Your first name</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
+            label="First"
+            description="Your first name"
           />
         </div>
 
-        <FormField
+        <FormInput
           control={form.control}
           name="last"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Last</FormLabel>
-              <FormControl>
-                <Input placeholder="" {...field} />
-              </FormControl>
-              <FormDescription>Your last name</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Last"
+          description="Your last name"
         />
 
         <Button type="submit">Submit</Button>
