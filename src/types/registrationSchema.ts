@@ -1,8 +1,8 @@
 import { z } from "zod";
 
-import { validateZipcode } from "./validateZipcode";
+import { validateZipcode } from "../app/validateZipcode";
 
-export const schema = z.object({
+export const registrationSchema = z.object({
   first: z.string().trim().min(1, {
     message: "First name is required.",
   }),
@@ -16,3 +16,5 @@ export const schema = z.object({
     message: "Invalid zipcode.",
   }),
 });
+
+export type Registration = z.infer<typeof registrationSchema>;

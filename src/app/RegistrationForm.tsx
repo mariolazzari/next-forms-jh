@@ -1,7 +1,7 @@
 "use client";
+
 import { useFormState } from "react-dom";
 import { useRef } from "react";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -13,40 +13,38 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
-import { schema } from "./registrationSchema";
+import { Registration, registrationSchema } from "../types/registrationSchema";
 
 export const RegistrationForm = ({
   onDataAction,
   onFormAction,
 }: {
-  onDataAction: (data: z.infer<typeof schema>) => Promise<{
+  onDataAction: (data: Registration) => Promise<{
     message: string;
-    user?: z.infer<typeof schema>;
+    user?: Registration;
     issues?: string[];
   }>;
   onFormAction: (
     prevState: {
       message: string;
-      user?: z.infer<typeof schema>;
+      user?: Registration;
       issues?: string[];
     },
     data: FormData
   ) => Promise<{
     message: string;
-    user?: z.infer<typeof schema>;
+    user?: Registration;
     issues?: string[];
   }>;
 }) => {
   const [state, formAction] = useFormState(onFormAction, {
     message: "",
   });
-  const form = useForm<z.infer<typeof schema>>({
-    resolver: zodResolver(schema),
+  const form = useForm<Registration>({
+    resolver: zodResolver(registrationSchema),
     defaultValues: {
       first: "",
       last: "",
@@ -55,7 +53,7 @@ export const RegistrationForm = ({
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof schema>) => {
+  const onSubmit = async (data: Registration) => {
     console.log(data);
     fetch("/api/register", {
       method: "POST",
